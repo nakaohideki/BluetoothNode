@@ -1,0 +1,25 @@
+{
+  "name": "bluetoothnode",
+  "version": "1.0.0",
+  "description": "Localizar e parear equipamentos com interface bluetooth.",
+  "main": "index.js",
+  "scripts": {
+    "mainscript": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nakaohideki/BluetoothNode.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "Node",
+    "Bluetooth"
+  ],
+  "author": "Oswaldo Fracini & Hideki Nakao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nakaohideki/BluetoothNode/issues"
+  },
+  "homepage": "https://github.com/nakaohideki/BluetoothNode#readme"
+}
