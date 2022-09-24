@@ -4,11 +4,997 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--    <link rel="stylesheet" href="/css/style.css" /> -->
-    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <title>Monitoramento de conexões</title>
   </head>
-  <body>
-    <h1>Configura bomba bico</h1>
-    <!--    <script src="/socket.io/socket.io.js"></script> -->
+    <h1 Style="height: 3vh">Conexão Estação Central x Bico de bomba</h1>
+
+    <div id="Buttons">
+    <button Style="height: 2.4vh" id="ToAddNozzle" onclick=CreateNozzle()>Adicionar Bico</button>
+    <button Style="height: 2.4vh" id="ToAddPump" onclick=CreatePump()>Adicionar Bomba</button>
+    <button Style="height: 2.4vh" id="ToRemove">Remover</button>
+    </div>
+    
+    <!--Connecting this file to socket.io
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>-->
+  <div id="addedEquipments">
+    <div id="addedPumps" title="Bombas Ativas">
+      <div id="addedPump1" title="Bomba 1" ></div>
+      <div id="addedPump2" title="Bomba 2" ></div>
+    </div>
+    <div id="addedNozzles">
+      <div id="Pump1AddedNozzles"></div>
+      <div id="Pump2AddedNozzles"></div> 
+    </div>
+  </div>
+  <div id="detectedEquipments">
+    <div id="detectedPumps">Bombas detectadas</p></div>
+    <div id="detectedNozzles">Bicos detectados</p></div>   
+  </div>  
+  
+  <div id="centerStation">
+        <footer id="information"></footer>
+      </div>
+    </div>
+    <div id="rightColumn">
+      <div id="pumpNozzle"></div>
+    </div>
+
+    <script>
+      var detectedPumpCounter = 0;
+      var activePumps = 0;
+      var detectedNozzleCounter = 0;
+      var lastPumpClick=0;
+      var nozzlesConnectedToPump1=0;
+      var nozzlesConnectedToPump2=0;
+      /*
+      var centerStationFound = false;
+      var pumpNozzleFound = false;
+      const socket = io(); //Instancing the socket.io calling its constructor.
+      //Checking for new connections by socket.io
+      socket.on("connect", function () {
+        //Adding the information to the last position in the div object to be shown.
+        $("#information").append("Server connected " + "<br>");
+        //Sending a message to server confirming the Grafic interface connection.
+        socket.emit("DeviceFound", "Graphic interface connected.");
+      });
+      //Printing the messages received from server by socket.io in the div object.
+
+      socket.on("Scan finished", function () {
+        if (centerStationFound && DeviceName != "Estação Central") {
+          CenterStationRemoval();
+        }
+      });
+
+      //socket.on("DeviceFound", CenterStationCreation());
+      socket.on("DeviceFound", function (DeviceName) {
+        //Adding the message to the last position in the div object to be shown.
+
+        switch (DeviceName) {
+          case "Estação Central":
+            if (centerStationFound === false) {
+              centerStationFound = true;
+              CenterStationCreation();
+              break;
+            }
+            break;
+
+          case "Bico":
+            if (pumpNozzleFound === false) {
+              pumpNozzleFound = true;
+              PumpNozzleCreation();
+              break;
+            }
+            break;
+
+          default:
+            console.log("Not detected.");
+            break;
+        }
+      });
+
+      function CenterStationCreation() {
+        var image = document.createElement("img");
+        image.src = "/img/CenterStation.jpg";
+        image.alt = "Center Station";
+        document.getElementById("centerStation").appendChild(image);
+        addEventListener("click", function () {
+          console.log("cliquei aqui");
+        });
+      }
+
+      function CenterStationRemoval() {
+        var element = document.querySelector("#centerStation > *:last-child");
+        if (element) {
+          element.remove();
+        }
+      }
+
+      function PumpNozzleCreation() {
+        var image = document.createElement("img");
+        image.src = "/img/PumpNozzle.jpg";
+        image.alt = "Pump Nozzle";
+        document.getElementById("pumpNozzle").appendChild(image);
+        addEventListener("click", function () {
+          console.log("cliquei aqui");
+        });
+      }*/
+
+      function CreatePump() {
+        lastButtonClick = "Adicionar Bomba";
+        detectedPumpCounter++;
+        switch (detectedPumpCounter)
+        {
+          case 1: createPump1();
+          break;
+
+          case 2: createPump2();
+          break;
+
+          default:
+          break;
+        }
+      }
+
+      function createPump1() 
+      {
+        var image = document.createElement("img");
+        var imageTitle = document.createElement("p");
+        imageTitle.innerHTML = "Bomba 1";
+        imageTitle.id = "Pump1"
+        image.src = "/img/CenterStation.jpg";
+        image.alt = "Pump_1";
+        image.id = "Pump1Detected";
+        image.onmousemove("Bomba 1");
+        document.getElementById("detectedPumps").appendChild(image).addEventListener("click", function() {
+          image.style.borderColor = "lawngreen";
+          image.style.cursor = "default";
+          document.getElementById("addedPump1").appendChild(imageTitle);
+          document.getElementById("addedPump1").appendChild(image);
+
+          lastPumpClick = 1;
+        })
+      }
+
+      function createPump2() 
+      {
+        var image = document.createElement("img");
+        var imageTitle = document.createElement("p");
+        imageTitle.innerHTML = "Bomba 2";
+        imageTitle.id = "Pump2"
+        image.src = "/img/CenterStation.jpg";
+        image.alt = "Pump_2";
+        image.id = "Pump2Detected";
+        image.title = "Bomba 2";
+        
+        document.getElementById("detectedPumps").appendChild(image).addEventListener("click", function() {
+          image.style.borderColor = "#8303ff";
+          image.style.cursor = "default";
+          document.getElementById("addedPump2").appendChild(imageTitle);
+          document.getElementById("addedPump2").appendChild(image);
+          lastPumpClick = 2;
+          
+        })
+      }
+
+      function CreateNozzle() {
+        lastButtonClick = "Adicionar Bico";
+        detectedNozzleCounter++;
+        switch (detectedNozzleCounter)
+        {
+          case 1: createNozzle1();
+          break;
+
+          case 2: createNozzle2();
+          break;
+
+          case 3: createNozzle3();
+          break;
+
+          case 4: createNozzle4();
+          break;
+
+          case 5: createNozzle5();
+          break;
+
+          case 6: createNozzle6();
+          break;
+
+          case 7: createNozzle7();
+          break;
+
+          case 8: createNozzle8();
+          break;
+
+          default:
+          break;
+        }
+      }
+
+      function createNozzle1() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_1";
+          image.id = "Nozzle1Detected";
+          image.title = "Bico 1";
+          image.style.maxHeight = "27%";
+          
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+              window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 1";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("detectedNozzles").firstChild.remove();     
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle); 
+              document.getElementById("Pump1AddedNozzles").appendChild(image);      
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.marginTop = "3.8%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 1";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);       
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 1";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);       
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+              document.getElementById("Pump1AddedNozzles").appendChild(image);    
+              image.style.borderColor = "lawngreen";         
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 1";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);       
+              document.getElementById("Pump1AddedNozzles").appendChild(image);
+              break;
+              }
+              else 
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }             
+            }
+
+            default:
+            break;
+          }           
+        })};
+      function createNozzle2() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_2";
+          image.id = "Nozzle2Detected";
+          image.title = "Bico 2";
+          image.style.maxHeight = "27%";
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+            window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+                    
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";       
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 2";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump1AddedNozzles").appendChild(image);    
+              
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 2";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else 
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 2";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              
+              if(document.getElementById("addedPump1").hasChildNodes == true)
+              {
+                document.getElementById("Pump1AddedNozzles").appendChild(image);    
+                image.style.borderColor = "lawngreen";         
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 2";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump1AddedNozzles").appendChild(image);
+                break;             
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+
+            default:
+            break;
+          }           
+        })};
+
+          function createNozzle3() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_3";
+          image.id = "Nozzle3Detected";
+          image.title = "Bico 3";
+          image.style.maxHeight = "27%";
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+            window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+              document.getElementById("Pump1AddedNozzles").appendChild(image);       
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 3";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump1AddedNozzles").appendChild(image);
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 3";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 3";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              if(document.getElementById("addedPump1").hasChildNodes == true)
+              {
+                document.getElementById("Pump1AddedNozzles").appendChild(image);    
+                image.style.borderColor = "lawngreen";         
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 3";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump1AddedNozzles").appendChild(image);
+                break;             
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+
+            default:
+            break;
+          }           
+        })};
+
+          function createNozzle4() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_4";
+          image.id = "Nozzle4Detected";
+          image.title = "Bico 4";
+          image.style.maxHeight = "27%";
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+            window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+              document.getElementById("Pump1AddedNozzles").appendChild(image);       
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 4";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump1AddedNozzles").appendChild(image);
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 4";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 4";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              if(document.getElementById("addedPump1").hasChildNodes == true)
+              {
+                document.getElementById("Pump1AddedNozzles").appendChild(image);    
+                image.style.borderColor = "lawngreen";         
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 4";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump1AddedNozzles").appendChild(image);
+                break;             
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            default:
+            break;
+          }           
+        })};
+
+      function createNozzle5() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_5";
+          image.id = "Nozzle5Detected";
+          image.title = "Bico 5";
+          image.style.maxHeight = "27%";
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+            window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+              document.getElementById("Pump1AddedNozzles").appendChild(image);       
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 5";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump1AddedNozzles").appendChild(image);
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 5";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 5";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              if(document.getElementById("addedPump1").hasChildNodes == true)
+              {
+                document.getElementById("Pump1AddedNozzles").appendChild(image);    
+                image.style.borderColor = "lawngreen";         
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 5";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump1AddedNozzles").appendChild(image);
+                break;             
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            default:
+            break;
+          }           
+        })};
+
+          function createNozzle6() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_6";
+          image.id = "Nozzle6Detected";
+          image.title = "Bico 6";
+          image.style.maxHeight = "27%";
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+            window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+              document.getElementById("Pump1AddedNozzles").appendChild(image);       
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 6";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump1AddedNozzles").appendChild(image);
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 6";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 6";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              if(document.getElementById("addedPump1").hasChildNodes == true)
+              {
+                document.getElementById("Pump1AddedNozzles").appendChild(image);    
+                image.style.borderColor = "lawngreen";         
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 6";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump1AddedNozzles").appendChild(image);
+                break;             
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            default:
+            break;
+          }           
+        })};
+
+          function createNozzle7() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_7";
+          image.id = "Nozzle7Detected";
+          image.title = "Bico 7";
+          image.style.maxHeight = "27%";
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+            window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+              document.getElementById("Pump1AddedNozzles").appendChild(image);       
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 7";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump1AddedNozzles").appendChild(image);
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 7";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 7";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              if(document.getElementById("addedPump1").hasChildNodes == true)
+              {
+                document.getElementById("Pump1AddedNozzles").appendChild(image);    
+                image.style.borderColor = "lawngreen";         
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 7";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump1AddedNozzles").appendChild(image);
+                break;             
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+
+            default:
+            break;
+          }           
+        })};
+
+          function createNozzle8() {
+          var image = document.createElement("img");
+          image.src = "/img/PumpNozzle.jpg";
+          image.alt = "Nozzle_8";
+          image.id = "Nozzle8Detected";
+          image.title = "Bico 8";
+          image.style.maxHeight = "27%";
+          document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function (){
+          switch (lastPumpClick)
+          {
+            case 0:
+            window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");
+            break;
+          
+            case 1:
+            if(nozzlesConnectedToPump1 < 4)
+            {
+              document.getElementById("Pump1AddedNozzles").appendChild(image);       
+              image.style.borderColor = "lawngreen";      
+              nozzlesConnectedToPump1++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 8";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump1AddedNozzles").appendChild(image);
+              break;
+            }
+            else
+            {
+              if(document.getElementById("addedPump2").hasChildNodes == true)
+              {
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                image.style.borderColor = "#8303ff";             
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 8";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump2AddedNozzles").appendChild(image);
+                break;
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            case 2:
+            if(nozzlesConnectedToPump2 < 4)
+            {
+              document.getElementById("Pump2AddedNozzles").appendChild(image);       
+              image.style.borderColor = "#8303ff";      
+              nozzlesConnectedToPump2++;
+              image.style.maxHeight = "20%";
+              image.style.maxWidth = "20%";
+              image.style.cursor = "default";
+              var imageTitle = document.createElement("p");
+              imageTitle.innerHTML = "Bico 8";
+              imageTitle.className = "NozzleSubtitle";
+              document.getElementById("Pump2AddedNozzles").appendChild(imageTitle);    
+              document.getElementById("Pump2AddedNozzles").appendChild(image);
+              break;
+            }
+            else 
+            {
+              if(document.getElementById("addedPump1").hasChildNodes == true)
+              {
+                document.getElementById("Pump1AddedNozzles").appendChild(image);    
+                image.style.borderColor = "lawngreen";         
+                nozzlesConnectedToPump2++;
+                image.style.maxHeight = "20%";
+                image.style.maxWidth = "20%";
+                image.style.cursor = "default";
+                var imageTitle = document.createElement("p");
+                imageTitle.innerHTML = "Bico 8";
+                imageTitle.className = "NozzleSubtitle";
+                document.getElementById("Pump1AddedNozzles").appendChild(imageTitle);    
+                document.getElementById("Pump1AddedNozzles").appendChild(image);
+                break;             
+              }
+              else
+              {
+                window.alert("Não há mais bombas ativas para se conectar com este bico. Para continuar com a aplicação, favor ativar mais uma bomba.");
+                break;
+              }
+            }
+            default:
+            break;
+          }           
+        })};
+    </script>
   </body>
 </html>
