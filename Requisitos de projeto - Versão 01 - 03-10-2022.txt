@@ -1,0 +1,19 @@
+Parte 1
+- Fechou-se a comunicação inicial com o bluetooth.
+- Fechou-se com a primeira versão da interface gráfica simulando a adição de bicos e bombas.
+Obs.: Débito técnico: 
+É necessário adicionar N número de bombas e N número de bicos.
+Alterar o botão de remover para o botão desconectar, e criar um botão chamado não detectar.(Ambos válidos para os bicos e as bombas). 
+Parte 2
+- Salvar configuração. (Salvar no socket.io). (Dispositivos conectados e detectados somente).(Escopo do servidor referente ao que está sendo exibido graficamente).
+- Cada comando que for executado deverá ser salvo em um arquivo .log.
+- Fluxo (A interface gráfica envia comando para simular bluetooth do cliente para o servidor e ele faz o salvamento e atualiza as informações para a interface gráfica).
+- Criar um botão que salva as configurações do sistema atuais em um arquivo para possibilitar uma reconfiguração em caso de pane no sistema.
+- Criar um botão para recarregar as configurações salvas previamente em caso de reinício após pane em sistema.
+- Na identificação de bicos e bombas deverá aparecer o código Bluetooth Address de cada equipamento.
+Parte 3
+-Retomar a detecção do bluetooth.
+-Filtra processo de detecção por UUID de bicos e bombas. (Filtrar por bombas e bicos através dos Ids dos equipamentos).
+- Enviar comando do bico a ser utilizado por uma determinada bomba.
+- Enviar comando para o bico para que ele fique ou não fique visível para ser scaneado por outro dispositivo bluetooth.
+- Criar um botão para desconectar todos os bicos de uma determinada bomba.
