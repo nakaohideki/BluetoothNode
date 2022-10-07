@@ -7,261 +7,249 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
     <title>Monitoramento de conexões</title>
   </head>
+  <div id="header">
     <h1 Style="height: 3vh">Conexão Estação Central x Bico de bomba</h1>
     <div id="Buttons">
-    <button Style="height: 2.4vh" id="ToAddNozzle" onclick=DetectNozzle()>Adicionar Bico</button>
-    <button Style="height: 2.4vh" id="ToAddPump" onclick=DetectPump()>Adicionar Bomba</button>
-    <button Style="height: 2.4vh" id="ToRemove"onclick=Remove()>Remover</button>
+    <button Style="height: 2.4vh" id="DetectNozzle" onclick=detectNozzle()>Detectar Bico</button>
+    <button Style="height: 2.4vh" id="DetectPump" onclick=detectPump()>Detectar Bomba</button>
+    <button Style="height: 2.4vh" id="Disconect"onclick=disconect()>Desconectar</button>
+    <button Style="height: 2.4vh" id="Undetect"onclick=undetect()>Não detectar</button>
     </div>
+  </div>
     <!--Connecting this file to socket.io
     <script src="/socket.io/socket.io.js"></script>
     <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>-->
-  <div id="addedEquipments">
-    <div id="addedPumps" title="Bombas Ativas">
-      <div id="addedPump1"></div>
-      <div id="addedPump2"></div>
-    </div>
-    <div class="addedNozzles">
-      <div id="Pump1AddedNozzles"></div>
-      <div id="Pump2AddedNozzles"></div> 
-    </div>
-  </div>
-  <div id="detectedEquipments">
-    <div id="detectedPumps">Bombas detectadas</p></div>
+  <div id="activeEquipments"></div>
     <div id="detectedNozzles">Bicos detectados</p></div>   
-  </div>  
   <div id="centerStation">
     <footer id="information"></footer>
   </div>
   <div id="rightColumn">
     <div id="pumpNozzle"></div>
   </div>
-
   <script>
-    var detectedPumpCounter = 0;  //Counter to indentify the amount of detected Pumps.
-    var activePumps = 0;  //Counter to identify the amount of activated Pumps.
-    var detectedNozzleCounter = 0;  //Counter to identify the amount of nozzle that was detected.
-    var lastPumpClick=0;  //Register of the number of the last pump clicked.
-    var nozzlesConnectedToPump1=0;  //Counter to indentify the quantity o nozzles was connected to the Pump1.
-    var nozzlesConnectedToPump2=0;  //Counter to indentify the quantity o nozzles was connected to the Pump2.
-    /*
-    var centerStationFound = false;
+  var activePumpCounter = 0;  //Counter to identify the amount of activated Pumps.
+  var detectedNozzleCounter = 0;  //Counter to identify the amount of nozzle that was detected.
+  var lastPumpClick=0;  //Register of the number of the last pump clicked.
+  var nozzlesConnectedCounter=0;  //Counter to indentify the quantity of nozzles was connected to a pump.
+  var pumpConnectionColorCode="";
+  var lastClickElementID="";
+/*    var centerStationFound = false;
     var pumpNozzleFound = false;
     const socket = io(); //Instancing the socket.io calling its constructor.
     //Checking for new connections by socket.io
-    socket.on("connect", function ()
-    {
+    socket.on("connect", function (){
     //Adding the information to the last position in the div object to be shown.
       $("#information").append("Server connected " + "<br>");
       //Sending a message to server confirming the Grafic interface connection.
-      socket.emit("DeviceFound", "Graphic interface connected.");
-    });
+      socket.emit("DeviceFound", "Graphic interface connected.");});
     //Printing the messages received from server by socket.io in the div object.
-
-    socket.on("Scan finished", function () 
-    {
+    socket.on("Scan finished", function (){
       if (centerStationFound && DeviceName != "Estação Central") 
-      {
-        CenterStationRemoval();
-      }
-    });
+      {CenterStationRemoval();}});
     //socket.on("DeviceFound", CenterStationCreation());
-    socket.on("DeviceFound", function (DeviceName)
-    {
+    socket.on("DeviceFound", function (DeviceName){
       //Adding the message to the last position in the div object to be shown.
-      switch (DeviceName)
-      {
+      switch (DeviceName){
         case "Estação Central":
-        if (centerStationFound === false) 
-        {
+        if (centerStationFound === false) {
           centerStationFound = true;
           CenterStationCreation();
-          break;
-        }
+          break;}
         break;
 
         case "Bico":
-          if (pumpNozzleFound === false) 
-          {
+          if (pumpNozzleFound === false) {
             pumpNozzleFound = true;
             PumpNozzleCreation();
-            break;
-          }
+            break;}
           break;
 
           default:
             console.log("Not detected.");
-            break;
-      }
-    });
+            break;}});
 
-    function CenterStationCreation() 
-    {
+    function CenterStationCreation(){
       var image = document.createElement("img");
       image.src = "/img/CenterStation.jpg";
       image.alt = "Center Station";
       document.getElementById("centerStation").appendChild(image);
-      addEventListener("click", function () 
-      {
-        console.log("cliquei aqui");
-      });
-    }
+      addEventListener("click", function (){
+        console.log("cliquei aqui");});}
 
-    function CenterStationRemoval() 
-    {
+    function CenterStationRemoval(){
       var element = document.querySelector("#centerStation > *:last-child");
-      if (element) 
-      {
-        element.remove();
-      }
-    }
+      if (element){
+        element.remove();}}
 
-    function PumpNozzleCreation() 
-    {
+    function PumpNozzleCreation() {
       var image = document.createElement("img");
       image.src = "/img/PumpNozzle.jpg";
       image.alt = "Pump Nozzle";
       document.getElementById("pumpNozzle").appendChild(image);
-      addEventListener("click", function () 
-      {
-        console.log("cliquei aqui");
-      });
-    }
-  */
+      addEventListener("click", function (){
+        console.log("cliquei aqui");});}*/
   
-  function DetectPump() //Function to create Pump. 
-  {
-    lastButtonClick = "Adicionar Bomba";  //Inform the system that the Adicionar Bomba button was clicked.
-    detectedPumpCounter++;  //Inform the system that a new pump was detected.
-    if(detectedPumpCounter <= 2)  //Checking the times that the ElementCreation function be called for this Pump.
-    {
+  function detectPump(){ //Function to create Pump. 
+    lastButtonClick = "Detectar Bomba";  //Inform the system that the Adicionar Bomba button was clicked.
+    activePumpCounter++;  //Inform the system that a new pump was activated.
       //Function to create the elements, using as parameter the object type and label title (dynamically created).
-      elementCreation("pump", "Bomba " + detectedPumpCounter);  
-    }
-  }
+      elementCreation("pump", "Bomba " + activePumpCounter, activePumpCounter);}
 
-  function DetectNozzle() //Function to create nozzle.
-  {
-    lastButtonClick = "Adicionar Bico";  //Inform the system that the Adicionar Bico button was clicked.
+  function detectNozzle(){ //Function to create nozzle.
+    lastButtonClick = "Detectar Bico";  //Inform the system that the Adicionar Bico button was clicked.
     detectedNozzleCounter++;  //Inform the system that a new nozzle was detected.
-    if (detectedNozzleCounter <= 8)
-    {
       //Nozzle creation with elementCreation function.
-      elementCreation("nozzle", "Bico " + detectedNozzleCounter)
-    }
-  }
+      elementCreation("nozzle", "Bico " + detectedNozzleCounter, detectedNozzleCounter);}
 
-  function elementCreation(type, title) //Function to a detected object
-  {
+  function elementCreation(type, code, counter){ //Function to a detected object
     var image = document.createElement("img");  //Creation of img object be assigned to the image variable.
     var figure = document.createElement("figure");  //Creation of figure object be assigned to the figure variable.
     var caption = document.createElement("figcaption");  //Creation of figcaption object be assigned to the caption variable.
-    image.alt, image.title, caption.textContent = title;  //Assignment of title content to image.alt, image.title and caption textContent.
-        
-    switch (type) //Directing the execution according to the supplied type.
-    {
+    switch (type){ //Directing the execution according to the supplied type.
       case "pump":  //In case of pump type.
+      image.alt, image.title = code;  //Assignment of title content to image.alt, image.title and caption textContent.    
+      caption.textContent = "_"+code;
+      var connection = document.createElement("div");  //Full div creation object be assigned to the connection variable.
+      var pump = document.createElement("div"); //Div creation corresponding to the location of pumps be assigned to the pump variable.
+      var nozzles = document.createElement("div"); //Div created to alocate the nozzles for this pump assigned to nozzles variable.
+      nozzles.className = "activeNozzles"; //Seting the nozzles class name to style the nozzles location div.
+      nozzles.id = code; //Seting dynamicaly the nozzles id to connect with the detected nozzles.
+      pump.className = "activePumpStyle"; //Seting the pump class name to style the pump location div.
+      connection.className = "activeConnection"; //Seting the div className as active connection(link to css style sheet)
+      connection.title = "Conexão ativa com a " + code; //Seting the title of connection with suitable pump.
+      //connection.id = code;
       image.src = "/img/CenterStation.jpg"; //The source of image is being defined in the image variable.
-      image.className = "PumpDetected"; //The class name is being set to style the image.(linking the correct style to the image).
+      image.className = "pumpActivated"; //The class name is being set to style the image. (linking the correct style to the image).
       caption.className = "PumpSubtitle"; //The class name is being set to style the caption.
-      var clickCounter=0; //Initialize the clickCounter variable in 0.
-      //Appending the created element image to the div with the detectedPumps id and adding a click event listener.(Appending detected pumps graphicaly).
-      document.getElementById("detectedPumps").appendChild(image).addEventListener("click", function() 
-      {
-        if(clickCounter==0) //This part of program will be executed after the first click on the image only.
-        {
-          figure.appendChild(caption);  //Appending the figcaption object to figure object.
-          figure.appendChild(image);  //Appending the image object to figure object.
-          image.className = "Pump1Added"; //The class name is being set to style the image. (linking the correct style to the image).
-          lastPumpClick=1;  //Informing the system that the last click given occured on the pump 1.
-          clickCounter++; //Registering the click to the click Counter.
-          
-          if(activePumps == 0)  //In case of there is not any activated pump.
-          {
-            //Appending the figure to the element with addedPump1 id and adding a click event listener. (Informing that the last pump clicked is Pump 1). 
-            document.getElementById("addedPump1").appendChild(figure).addEventListener("click", function(){lastPumpClick=1});
-            activePumps = 1;  //Registering the activation of 1 pump.
-          }
-          else
-          {
-            if(activePumps == 1)  //In case of there is 1 activated pump.
-            {
-              //Appending the figure to element with addedPump2 id and adding a click event listener. (Informing that the last pump clicked is Pump 2).
-              document.getElementById("addedPump2").appendChild(figure).addEventListener("click", function(){lastPumpClick=2});
-              image.className = "Pump2Added"; //The class name is being set to style the image. (linking the correct style to the image).
-              lastPumpClick=2  //Informing the system that the last click given occured on the pump 2.
-              activePumps = 2;  //Registering the activation of 2 pumps.
-            }
-          }    
-        }
-      })             
+      figure.appendChild(caption);  //Appending the figcaption object to figure object.
+      figure.appendChild(image);  //Appending the image object to figure object.
+      pump.appendChild(figure);  //Appending the figure object(caption + pump image) to pump div.
+      lastPumpClick = code;  //Informing the system that the last click given in this pump.*/
+      connection.appendChild(pump); //Appending the pump div to the connection div.
+      connection.appendChild(nozzles);  //Appending the nozzles div (space to alocate the nozzles connected to this pump) to the connection div.
+      pumpConnectionColorCode = borderStyler(counter);
+      image.style.borderColor = pumpConnectionColorCode;
+      //Append the connection div to element with activeEquipments id adding a click listener. (Inform the last clicked element to the sytem).
+      document.getElementById("activeEquipments").appendChild(connection).addEventListener("click", function(){
+        lastPumpClick = code;
+        lastClickElementID = code;
+        pumpConnectionColorCode = borderStyler(counter);});
       break;
 
       case "nozzle":  //In case of nozzle type.
-        image.src = "/img/PumpNozzle.jpg";  //The source of image is being defined in the image variable.
+        image.alt, image.title, caption.textContent = code;  //Assignment of title content to image.alt, image.title and caption textContent.    
+        image.src = "/img/GasNozzle.jpg";  //The source of image is being defined in the image variable.
         image.className = "NozzleDetected"; //The class name is being set to style the image.(linking the correct style to the image).
         caption.className = "NozzleSubtitle"; //The class name is being set to style the caption.
-        //Appending the created element image to the div with detectedNozzles id and adding a click event listener.(Append detected nozzles graphicaly).
-        document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function() 
-        {
-          figure.appendChild(caption);  //Appending the figcaption object to figure object.
-          figure.appendChild(image);  //Appending the image object to figure object.
-          switch (lastPumpClick)  //Checking the last pump was clicked.
-          {
+        caption.id="NozzleSubtitleId";
+        //Append the image to div with detectedNozzles adding a click listener.(Append detected nozzles graphicaly).
+        document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function(){
+        figure.appendChild(caption);  //Appending the figcaption object to figure object.
+        //image.id = "image id " + code; 
+        figure.appendChild(image);  //Appending the image object to figure object.
+        image.className = "nozzlesConnected"; //The class name is being set to style the image.(linking the correct style to the image).
+        image.style.borderColor = pumpConnectionColorCode;  //Assigning the selected pump color to the image border color.
+        figure.id = code; //Assigning the figure id to the content of code variable.
+          switch (lastPumpClick){  //Checking the last pump was clicked.
             case 0: //No pumps clicked.
-              window.alert("Favor iniciar a aplicação através da ativação de uma bomba.");  //Message requesting that the user active a pump.
+              window.alert("Não há bombas ativas para conexão.");  //Message warning that there is not any available active pump.
               break;
-          
-            case 1: //In case a pump be active.
-            if(nozzlesConnectedToPump1 < 4) //Checking if there is space to connect the the nozzle.(The max capacity is 4 nozzles per pump).
-              { 
-                image.className = "nozzlesConnectedImageToPump1"; //The class name is being set to style the image.
-                //Appending the created element figure to the pump1 connected nozzles group.               
-                document.getElementById("Pump1AddedNozzles").appendChild(figure);
-                nozzlesConnectedToPump1++;  //Informing the system that a nozzle as connected to the Pump1.       
-                break;
-              }
-              else
-              {
-                if(document.getElementById("addedPump2").hasChildNodes == true) //Checking if the pump2 has been activated.
-                {
-                  image.className = "nozzlesConnectedImageToPump2"; //The class name is being set to style the image.
-                  //Appending the created element figure to the pump2 connected nozzles group.
-                  document.getElementById("Pump2AddedNozzles").appendChild(figure);             
-                  nozzlesConnectedToPump2++;  //Informing the system that a nozzle as connected to the Pump2. 
-                  break;
-                }
-                else
-                {
-                  //Message requesting that the user active another pump because there is not any activated pump with available capacity.
-                  window.alert("Não há bombas ativas com capacidade disponível para conexão com este bico. Para continuar, favor ativar mais uma bomba.");
-                  //Appending the image element to element with detectedNozzles id and adding a click event listener.(Append detected nozzles graphicaly).
-                  document.getElementById("detectedNozzles").appendChild(image).addEventListener("click", function()
-                  {
-                    //Appending the created element figure to the pump2 connected nozzles group.
-                    document.getElementById("Pump2AddedNozzles").appendChild(figure);             
-                    nozzlesConnectedToPump2++;  //Informing the system that a nozzle as connected to the Pump2. 
-                  })
-                  break;
-                }
-              }
-              break;
-            
-              case 2: //In case of the 2 pumps be active.
-                if(nozzlesConnectedToPump2 < 4) //Checking if there is space to connect the the nozzle.(The max capacity is 4 nozzles per pump).
-                {
-                  image.className = "nozzlesConnectedImageToPump2"; //The class name is being set to style the image.
-                  //Appending the created element figure to the pump2 connected nozzles group.
-                  document.getElementById("Pump2AddedNozzles").appendChild(figure);       
-                  nozzlesConnectedToPump2++;  //Informing the system that a nozzle as connected to the Pump2.
-                }
-                break;
+            default:  //In case of some pumps be active.
+              //Checking if the selected pump with id bomba + lastPumpClick has enough capacity to connect with nozzles. (Needs to be lower than 4).
+              if(document.getElementById(lastPumpClick).childElementCount < 4){
+                //Appending the nozzle figure element to the selected pump adding a click listener.(Append connected nozzles graphicaly)
+                document.getElementById(lastPumpClick).appendChild(figure).addEventListener("click", function() {lastClickElementID = code});
+                image.style.borderColor = pumpConnectionColorCode;  //Assigning the selected pump color to the image border color.
+                break;}else{
+                //Message warning that the selected pump is already connected with the maximum amount of nozzles.
+                break;}
+              break}});}}
 
-              default:
-                break;
-            }})
-          }
-        }
+function disconect(){ //Function to disconnect the nozzle from the pump.
+  document.getElementById(lastClickElementID).firstElementChild.remove(); //Removing the figcaption of the connected nozzle.
+  //Appending the nozzle image to the detected nozzle div and assigning the NozzleDetected class to it.
+  document.getElementById(lastClickElementID).lastChild.setAttribute("class", "NozzleDetected");
+  //Setting the border color assignment of nozzle image to red.  
+  document.getElementById("detectedNozzles").appendChild(document.getElementById(lastClickElementID).lastElementChild).style.borderColor = "red"; 
+}
+
+function undetect(){  //Function to remove the last clicked element.
+  document.getElementById(lastClickElementID).remove(); //Removing the last click element id.
+  switch (lastClickElementID.substr(0,5)){  //Checking if the element removed was a pump or nozzle.
+    case "Bomba": //In case of pump.
+      if(activePumpCounter > 0){  //Checking if the counter is bigger than zero.
+        activePumpCounter--;} //Decresing 1 of the active pump counter.
+    
+    default:  //In case of nozzle.
+      if(detectedNozzleCounter > 0){  //Checking if the counter is bigger than zero.
+        detectedNozzleCounter--;}}} //Decreasing 1 of the active pump counter.
+
+  //Function to define the 20 initial border colors for active conncetions equipments.(pump and nozzles)
+  function borderStyler (number){
+    switch(number){
+      case 1: return "#7CFC00"; //LawnGreen
+      break;
+
+      case 2: return "#0000FF"; //Blue
+      break;
+
+      case 3: return "#9400D3"; //Darkviolet
+      break;
+
+      case 4: return "#BDB76B"; //Darkkhaki
+      break;
+
+      case 5: return "#FF4500"; //Orange
+      break;
+
+      case 6: return "#C71585"; //Medium Violet Red
+      break;
+
+      case 7: return "#800000"; //Maroon
+      break;
+
+      case 8: return "#FF00FF"; //Magenta
+      break;
+
+      case 9: return "#FFD700"; //Gold1
+      break;
+
+      case 10: return "#836FFF";  //Light Slate Blue
+      break;
+
+      case 11: return "#00CED1";  //Dark Turquoise
+      break;
+
+      case 12: return "#00FA9A";  //Medium Spring Green
+      break;
+
+      case 13: return "#DAA520";  //Golden Rod
+      break;
+
+      case 14: return "#9370DB";  //Medium Purple
+      break;
+
+      case 15: return "#FF1493";  //Deep Pink
+      break;
+
+      case 16: return "#8B0000";  //Red4
+      break;
+
+      case 17: return "#FF8C00";  //Dark Orange
+      break;
+
+      case 18: return "#FFFF00";  //Yellow
+      break;
+
+      case 19: return "#6959CD";  //Slate Blue 3
+      break;
+
+      case 20: return "#00FFFF";  //Cyan
+      break;
+
+      default: return "#" + Math.floor(Math.random()*16777215).toString(16);
+      break;}}
     </script>
   </body>
 </html>
