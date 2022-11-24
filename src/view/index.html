@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" type="text/css" href="/src/view/css/style.css" />
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<title>Monitoramento de conexões</title>
+	</head>
+	<div id="header">
+		<h1 style="height: 1vh">Conexão Estação Central x Bico de bomba</h1>
+		<!--<div id="Buttons">
+			<button style="height: 1%" id="DetectNozzle" onclick="detectNozzle()">
+				Detectar Bico
+			</button>
+			<button style="height: 1%" id="DetectPump" onclick="detectPump()">
+				Detectar Bomba
+			</button>
+			<button style="height: 1%" id="Disconect" onclick="disconect()">
+				Desconectar
+			</button>
+			<button style="height: 1%" id="Undetect" onclick="undetect()">
+				Não detectar
+			</button>-->
+	</div>
+	<div id="activeEquipments"></div>
+	<div id="detectedEquipments">
+		<div id="detectedNozzles">
+			<div id="div_titulo">Bicos Detectados</div>
+		</div>
+	</div>
+	<div id="centerStation"></div>
+	<script>
+		var activePumpCounter = 0; //Counter to identify the amount of activated Pumps.
+		var detectedNozzleCounter = 0; //Counter to identify the amount of nozzle that was detected.
+		var lastPumpClick = 0; //Register of the number of the last pump clicked.
+		var nozzlesConnectedCounter = 0; //Counter to indentify the quantity of nozzles was connected to a pump.
+		var pumpConnectionColorCode = "";
+		var lastClickElementID = "";
+		var centerStationFound = false;
+		var pumpNozzleFound = false;
+		const socket = io();
+		socket.emit("DetectedDevices");
+		socket.on("DetectedDevices", function (DetectedDevices) {
+			for (var i = 0; i < DetectedDevices.length; i++) {
+				iconCreate(
+					DetectedDevices[i].type,
+					DetectedDevices[i].counter,
+					DetectedDevices[i].address
+				);
+			}
+		});
+		function iconCreate(type, counter, address) {
+			var icon = document.createElement("img");
+			var fig = document.createElement("figure");
+			var cap = document.createElement("figcaption");
+			var code = type + " " + counter;
+			icon.alt = code;
+			fig.appendChild(cap);
+			fig.appendChild(icon);
+			cap.textContent = code;
+			switch (type) {
+				case "Bomba":
+					var connection = document.createElement("div");
+					var pump = document.createElement("div");
+					var nozzles = document.createElement("div");
+					icon.src = "./src/view/img/FuelPump.jpg";
+					icon.className = "pumpActivated"; //The class name is being set to style the image. (linking the correct style to the image).
+					icon.style.borderColor = pumpConnectionColorCode;
+					pump.className = "activePumpStyle"; //Seting the pump class name to style the pump location div.
+					pump.appendChild(fig);
+					pumpConnectionColorCode = borderStyler(counter);
+					icon.style.borderColor = pumpConnectionColorCode;
+					connection.className = "activeConnection";
+					connection.appendChild(pump); //Appending the pump div to the connection div.
+					connection.appendChild(nozzles);
+					nozzles.className = "activeNozzles"; //Seting the nozzles class name to style the nozzles location div.
+					nozzles.id = code; //Seting dynamicaly the nozzles id to connect with the detected nozzles.
+					cap.className = "PumpSubtitle";
+					document
+						.getElementById("activeEquipments")
+						.appendChild(connection)
+						.addEventListener("click", function () {
+							lastPumpClick = code;
+							lastClickElementID = code;
+							pumpConnectionColorCode = borderStyler(counter);
+						});
+					break;
+				case "Bico":
+					icon.src = "./src/view/img/GasNozzle.jpg";
+					icon.className = "NozzleDetected";
+					cap.className = "NozzleDetectedSubtitle";
+					fig.appendChild(icon);
+					document
+						.getElementById("detectedNozzles")
+						.appendChild(fig)
+						.addEventListener("click", function () {
+							switch (lastPumpClick) {
+								case 0:
+									window.alert("Não há bombas ativas para conexão.");
+									break;
+								default:
+									if (
+										document.getElementById(lastPumpClick)
+											.childElementCount < 4
+									) {
+										fig.appendChild(cap);
+										fig.appendChild(icon);
+										icon.className = "nozzlesConnected";
+										icon.style.borderColor = pumpConnectionColorCode;
+										var PumpConnection = [];
+										PumpConnection.push(code);
+										PumpConnection.push(address);
+										PumpConnection.push(lastPumpClick);
+
+										socket.emit("PumpConnection", PumpConnection);
+										document
+											.getElementById(lastPumpClick)
+											.appendChild(fig)
+											.addEventListener("click", function () {
+												lastClickElementID = code;
+											});
+										cap.className = "NozzleSubtitle";
+										icon.style.borderColor = pumpConnectionColorCode;
+										break;
+									} else {
+										window.alert(
+											"A bomba selecionada está conectada com a máxima quantidade de bicos suportados."
+										);
+									}
+									break;
+							}
+						});
+					break;
+			}
+		}
+		function borderStyler(number) {
+			switch (number) {
+				case 1:
+					return "#7CFC00"; //LawnGreen
+					break;
+				case 2:
+					return "#0000FF"; //Blue
+					break;
+				case 3:
+					return "#9400D3"; //Darkviolet
+					break;
+				case 4:
+					return "#BDB76B"; //Darkkhaki
+					break;
+				case 5:
+					return "#FF4500"; //Orange
+					break;
+				case 6:
+					return "#C71585"; //Medium Violet Red
+					break;
+				case 7:
+					return "#800000"; //Maroon
+					break;
+				case 8:
+					return "#FF00FF"; //Magenta
+					break;
+				case 9:
+					return "#FFD700"; //Gold1
+					break;
+				case 10:
+					return "#836FFF"; //Light Slate Blue
+					break;
+				case 11:
+					return "#00CED1"; //Dark Turquoise
+					break;
+				case 12:
+					return "#00FA9A"; //Medium Spring Green
+					break;
+				case 13:
+					return "#DAA520"; //Golden Rod
+					break;
+				case 14:
+					return "#9370DB"; //Medium Purple
+					break;
+				case 15:
+					return "#FF1493"; //Deep Pink
+					break;
+				case 16:
+					return "#8B0000"; //Red4
+					break;
+				case 17:
+					return "#FF8C00"; //Dark Orange
+					break;
+				case 18:
+					return "#FFFF00"; //Yellow
+					break;
+				case 19:
+					return "#6959CD"; //Slate Blue 3
+					break;
+				case 20:
+					return "#00FFFF"; //Cyan
+					break;
+				default:
+					return "#" + Math.floor(Math.random() * 16777215).toString(16);
+					break;
+			}
+		}
+		$(function () {
+			$(document).tooltip().addClass("NozzleSubtitleDetected");
+		});
+	</script>
+</html>
